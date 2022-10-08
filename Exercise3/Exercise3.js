@@ -14,7 +14,7 @@ const btnGeo = document.querySelector('.geo');
 let message = document.querySelector(".enterMessage");
 let countMessages = 0;
 
-function writeToScreen(message) {
+function writeToScreen(message) {  //Выводит сообщения на экран
     if (countMessages >= 11) { //Очистить окно сообщений
         while (output.hasChildNodes()) {
             output.removeChild(output.lastChild);
@@ -52,3 +52,28 @@ btn.addEventListener('click', () => {
     writeToScreen("SENT: " + message.value);
     websocket.send(message.value);
 });
+
+
+btnGeo.addEventListener("click", getLocation); //При нажатии на кнопку Геолокация
+
+function getLocation() { //Браузер определяет координаты местоположения
+    if ("geolocation" in navigator) {
+        let locationOptions = {
+            enableHighAccuracy: true
+        };
+        navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+    } else {
+        writeToScreen("Ваш браузер не поддерживает функцию определения местоположения");
+    }
+}
+
+function locationSuccess(data) {  //Если кординаты найдены успешно, то выводим ссылку на карту
+    let link = `https://www.openstreetmap.org/#map=${data.coords.longitude}/${data.coords.latitude}`;
+    writeToScreen(`<a href="${link}" target="_blank">Вы находитесь здесь</a>`);
+}
+
+function locationError() {
+    writeToScreen("При получении местоположения произошла ошибка");
+}
+
+
